@@ -1,0 +1,92 @@
+```{r data generation, echo = FALSE, results = "hide"}
+library(tidyverse)
+library(exams)
+
+transformtype <- sample(c('exp', 'log', 'power', 'none'), 1, prob=c(0.2, 0.2, 0.2, 0.4))
+
+if (transformtype == 'power') {
+  d <- data.frame(x = runif(100, 0.5, 2))
+  a <- 1
+  b <- sample(c(-1,0,1),1,prob=c(0.4,0.2,0.4))
+  d$y <- a* d$x^(3*b)*exp(rnorm(100, sd = 0.4))
+} else if (transformtype == 'exp') {
+  d <- data.frame(x = runif(100, 0.5, 2))
+  a <- 1
+  b <- sample(c(-1,0,1),1,prob=c(0.4,0.2,0.4))
+  d$y <- a*exp(1.5*b* d$x)*exp(rnorm(100, sd = 0.4))
+} else if (transformtype == 'log') {
+  d <- data.frame(x = runif(100, 0.1, 2))
+  a <- 1
+  b <- sample(c(-1,0,1),1,prob=c(0.4,0.2,0.4))
+  d$y <- a + b * log( d$x) + rnorm(100, sd = 0.3)
+} else {
+  d <- data.frame(x = runif(100, 0.5, 2))
+  a <- 1
+  b <- sample(c(-1,0,1),1,prob=c(0.4,0.2,0.4))
+  d$y <- a + b * d$x + rnorm(100, sd = 0.3)
+}
+
+m <- lm(y ~ x, data = d)
+
+bhat <- coef(m)[2]
+
+transform <- transformtype %in% c('power','exp','log')
+
+questions <- character(5)
+questions[1] <- "The scatter plot shows an increasing trend that is fairly straight."
+questions[2] <- "The scatter plot shows a decreasing trend that is fairly straight."
+questions[3] <- "The scatter plot shows an increasing trend with curvature."
+questions[4] <- "The scatter plot shows a decreasing trend with curvature."
+questions[5] <- "The scatter plot shows no real trend."
+
+solutions <- c( (bhat > 0.2)  & !transform, 
+                (bhat < -0.2)  & !transform, 
+                (bhat > 0.2)  & transform, 
+                (bhat < -0.2)  & transform,
+                abs(bhat) < 0.2
+                )
+
+explanations <- character(5)
+
+## permute order of solutions/questions
+Order <- sample(1:5)
+possible_answers <- questions[Order]
+solutions <- solutions[Order]
+explanations <- explanations[Order]
+```
+
+Question
+========
+
+The following chart shows the relationship between variables `x` and `y`:
+
+```{r,echo=FALSE, fig.width=8, fig.height=5, fig.retina=2, fig.cap=""}
+ggplot(data=d) +
+  geom_point(mapping=aes(x=x, y=y))
+```
+
+Which of the following statements is true about the relationship between `x` and `y`?
+
+```{r questionlist, echo = FALSE, results = "asis"}
+answerlist(possible_answers, markup = "markdown")
+```
+
+```{r}
+bhat
+transformtype
+transform
+solutions
+```
+
+Solution
+========
+
+```{r solutionlist, echo = FALSE, results = "asis"}
+answerlist(mchoice2text(solutions, markup="markdown"), explanations, markup = "markdown")
+```
+
+Meta-information
+================
+extype: schoice
+exsolution: `r mchoice2string(solutions)`
+exname: Multiple Choice
