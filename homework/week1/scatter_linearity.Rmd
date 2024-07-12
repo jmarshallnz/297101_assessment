@@ -71,13 +71,6 @@ Which of the following statements is true about the relationship between `x` and
 answerlist(possible_answers, markup = "markdown")
 ```
 
-```{r}
-bhat
-transformtype
-transform
-solutions
-```
-
 Solution
 ========
 
