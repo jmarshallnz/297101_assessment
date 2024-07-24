@@ -1,0 +1,40 @@
+---
+title: "297.101: Homework 3"
+author: "YOUR NAME HERE"
+output: html_document
+---
+
+The data for today is daily counts of those walking or cycling over the He Ara Kotahi bridge across the Manawatu river in Palmerston North. The following code block reads these data in and wrangles them into the correct form for charting. **Don't change this code block.**
+
+```{r, message=FALSE}
+library(tidyverse)
+
+bridge <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/pncc_cycle_counts/he_ara_kotahi_one_year.csv") |> 
+  group_by(Date) |> summarise(Count = sum(Count)) |>
+  mutate(Day = wday(Date, label=TRUE, abbr = FALSE)) |>
+  select(Day, Count)
+```
+
+## Task
+
+Use the code chunk below to produce a chart summarising the **distribution** of the `Count` for each `Day` of the week.
+
+- *The `Day` grouping variable has 7 possible values, so consider the best type of display for this many groups.*
+
+- *Ensure you label the axes of your chart appropriately.*
+
+- *Choose a title, subtitle or both that help tell the story.*
+
+```{r}
+bridge |>
+  ggplot() +
+  geom_boxplot(mapping=aes(x=Count, y=Day))
+```
+
+## Submission
+
+- *Make sure you fill in your name in the `author` field at the top.*
+
+- *Once you are happy with your chart, "Knit" this .Rmd file to produce a .html file.*
+
+- *Submit the resulting .html file to stream.*
