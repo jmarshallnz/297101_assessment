@@ -26,9 +26,6 @@ Use the code chunk below to produce a chart summarising the **distribution** of 
 - *Choose a title, subtitle or both that help tell the story.*
 
 ```{r}
-bridge |>
-  ggplot() +
-  geom_boxplot(mapping=aes(x=Count, y=Day))
 ```
 
 ## Submission
