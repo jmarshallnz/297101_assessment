@@ -1,0 +1,136 @@
+---
+title: "297.101 Statistical Data Science: Assignment 1"
+output: html_document
+---
+
+## Introduction
+
+This assignment covers the material from the first 6 weeks, including visualisation/charting and data wrangling. If you have completed all the workshops you should have already met the material you need to complete the assignment.
+
+The assignment is assessed and should be your own work. You're welcome to discuss with other students, but submitted work **must** be your own.
+
+There are three exercises in total, with marks specified below.
+
+Start by downloading the R markdown template for the assignment from here (right click -> Save link as)
+
+https://www.massey.ac.nz/~jcmarsha/297101/assignment1/assignment.Rmd
+
+**NOTE: The R markdown file contains instructions for obtaining the data. The data is student ID specific, so the region and sites you'll be looking at in Exercise 2 will be different to other students. Make sure you follow the instructions in the .Rmd file before you start!**
+
+All answers for each exercise should be written up in the assignment.Rmd file. **Before submission**, Knit your assignment.Rmd file to HTML and **submit the .html file** to the Assignment dropbox on stream.
+
+## Grading
+
+There are typically multiple ways to achieve a correct answer for each question.
+
+- We don't mind how an answer is achieved. As long as there is a clear, logical method used, full marks will be given.
+- We will provide advice if there is a better, faster, or cleaner way to achieve the same thing.
+- There are gold stars available for excellent answers. These do not typically count for final grade, but may make you (and the marker!) feel good.
+- We expect all charts to be appropriately labelled (axes with units if appropriate) and legible to achieve full marks.
+- We don't require charts to be pretty, beyond being correctly labelled and legible. The exception to this is Exercise 2 where we expect you to reproduce the chart as close as you can. Students are welcome (and encouraged!) to make their charts pretty though! 
+
+## Exercise 1 (20 marks)
+
+Answer the following questions by producing code in the code blocks provided in the markdown file:
+
+1. In the first code block, use `dplyr` to manipulate the data so that you have the **proportion immunised** (i.e. Immunised divided by Eligible) for each `DHB`, for each `Age`, and each `Date`. Save the result so you can use it for the remaining questions.
+
+    - You should end up with a data frame containing variables for `DHB`, `Date`, `Age` and `Proportion`.
+    - It should have 6387 observations.
+
+2. The current health target for immunisation is having 95% of 24 month olds immunised. Since the beginning of 2022, only one DHB has met this target.
+
+    Which DHB is it, and which time periods since 2022 did they meet the target?
+
+    - Use `filter` to find the rows you want.
+
+3. Produce a table of the **average** proportion immunised of 24 month year olds for each DHB. Order your table so that the best performing DHB is in the first row.
+
+    - Use `group_by` and `summarise` to compute the averages.
+
+4. Produce a plot of the proportion immunised at 24 months for each DHB through time, comparing them to the 95% health target.
+
+    - The `geom_hline()` function can be used to put a horizontal line on the plot.
+    - Consider how to clearly differentiate each DHB.
+    - Make sure you clearly label axes and have a suitable title.
+
+5. Choose **ONE (1)** DHB (e.g. perhaps where you grew up, if you did so in NZ, or where a friend or family grew up if not from NZ) and produce a plot to demonstrate how that DHB is tracking over time for all age groups.
+
+    - Consider smoothing the data
+    - Make sure you can clearly distinguish the different age groups.
+    - Make sure you clearly label axes and have a suitable title.
+
+
+## Exercise 2 (15 marks)
+
+Your goal in this question is to use river quality data from Land and Water Aotearoa https://www.lawa.org.nz to reproduce the chart below as best as you can.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(lubridate)
+library(Manu)
+lawa <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/LAWA/lawa00.csv")
+lawa_to_plot <- lawa %>% filter(!is.na(TURB), TURB > 0) %>%
+  group_by(SiteID) %>%
+  filter(n() > 50) %>%
+  mutate(DayOfYear = yday(Date))
+  
+ggplot(lawa_to_plot,
+       aes(x=DayOfYear, y=TURB, col=LandCover, group=SiteID)) +
+    geom_point(alpha=0.3) +
+    geom_smooth(alpha=0.3) +
+    scale_y_log10() +
+    facet_wrap(vars(LandCover)) +
+    guides(col='none') +
+    theme_minimal() +
+  scale_colour_manual(values = get_pal("Hoiho")[2:5]) +
+    labs(title = "Turbidity changes through the year depending on land use",
+         subtitle = "Each curve represents a separate sampling site",
+         x = "Day of the year",
+         y = "Turbidity (NTU)")
+```
+
+1. The first code block then performs some data wrangling. Describe what data manipulation is being performed in the second code block. Ensure you detail the purpose of each command in the pipeline.
+
+2. Produce the plot by adding code to the third code block.
+  
+      - Each student's data set is different, so your plot is unlikely to match the above exactly.
+      - **Some datasets have only three land cover categories so the chart will have 3 panels instead of 4.** That is OK!
+      - Each curve represents a `SiteID`. You may find the `group` aesthetic to be useful.
+      - The colours used are `#7C7189`, `#FAE093`, `#D04E59` and `#BC8E7D`.
+      - The same amount of transparency has been used for both the points and the uncertainty bands.
+      - Don't worry too much about matching font size as it may depend on your computer settings.
+
+## Exercise 3 (15 marks)
+
+This question uses data from the automatic counter on He Ara Kotahi, the pedestrian and cycling bridge over the Manawatu river.
+
+1. In the first code block, write code to create a table of the mean daily counts over the bridge (regardless of direction) for each day of the week by each mode (pedestrian or cyclist).
+
+      - The `wday()` function from the `lubridate` package will be useful.
+      - Pivoting wider will give a more readable table.
+
+2. Write code to create a chart of the total monthly counts over the bridge for each month by each mode (pedestrian or cyclist) in each direction (to Massey or to City).
+
+      - The `month()` function from the `lubridate` package will be useful.
+      - There are 4 variables to chart (month, count, mode, direction).
+      - Facetting and colour are likely useful.
+
+3. As seen on the plot below, typically there are more pedestrians crossing in the `To Massey` direction compared to the `To City` direction, as many people walking do a loop, coming back across the river using the vehicle bridge at Fitzherbert.
+
+    ```{r, echo=FALSE, message=FALSE, warning=FALSE, fig.height=3, fig.width=8}
+    he_ara_kotahi <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/pncc_cycle_counts/he_ara_kotahi_one_year.csv")
+    he_ara_kotahi %>% filter(Mode == "Pedestrian") %>%
+      ggplot(mapping = aes(x=Date, y=Count, col=Direction)) +
+      geom_line() +
+      geom_smooth(span=0.3) +
+      labs(title = "Daily pedestrian counts over He Ara Kotahi",
+           x = NULL) +
+      scale_colour_manual(values = get_pal("Hoiho")[c(2,4)]) +
+      theme_minimal() +
+      theme(legend.position = 'bottom')
+    ```
+
+    However, during the period recorded there was a running event which started at Massey and had participants run across the bridge from Massey towards the City. Use the data to find the date on which this event was held. You must include the code you use to find the answer.
+
+      - Pivotting the data wider by Direction will help.

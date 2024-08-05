@@ -1,0 +1,108 @@
+---
+title: "297.101: Assignment 1"
+author: "YOUR NAME HERE"
+output: html_document
+---
+
+In the last line of the code block below that loads in the LAWA data, change the `XY` to the last two digits of your student ID number. e.g. my student ID was 95024645, so I would replace XY with 45.
+
+```{r, message=FALSE}
+library(tidyverse)
+library(lubridate)
+vacc <- read_csv("https://www.massey.ac.nz/~jcmarsha/297101/data/vaccinations.csv")
+he_ara_kotahi <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/pncc_cycle_counts/he_ara_kotahi_one_year.csv")
+
+### CHANGE ME!!!
+lawa <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/LAWA/lawaXY.csv", guess_max = 10000)
+```
+
+**MAKE SURE YOU CAN KNIT THIS DOCUMENT BEFORE YOU START**
+
+## Exercise 1
+
+### 1.1
+
+Use `dplyr` to manipulate the data so that you have the **proportion immunised** (i.e. Immunised divided by Eligible) for each `DHB`, for each `Age`, and each `Date`. Save the result so you can use it for the remaining questions. *You should end up with a data frame containing variables for `DHB`, `Date`, `Age` and `Proportion` with 6387 observations.*
+
+```{r}
+
+```
+
+### 1.2
+
+The current health target for immunisation is having 95% of 24 month olds immunised. Which DHB has met this target since the beginning of 2022, and in which time period(s) did they meet the target?
+
+```{r}
+
+```
+
+### 1.3
+
+Produce a table of the **average** proportion immunised of 24 month year olds for each DHB. Order your table so that the best performing DHB is in the first row.
+
+```{r}
+```
+
+### 1.4
+
+Produce a plot of the proportion immunised at 24 months for each DHB through time, comparing them to the 95% health target.
+
+```{r}
+
+```
+
+### 1.5
+
+Choose **ONE (1)** DHB (e.g. perhaps where you grew up, if you did so in NZ, or where a friend or family grew up if not from NZ) and produce a plot to demonstrate how that DHB is tracking over time for all age groups.
+
+```{r}
+
+```
+
+## Exercise 2
+
+### 2.1
+
+What is this code doing?
+
+```{r}
+lawa_to_plot <- lawa %>% filter(!is.na(TURB), TURB > 0) %>%
+  group_by(SiteID) %>%
+  filter(n() > 50) %>%
+  mutate(DayOfYear = yday(Date))
+```
+
+WRITE YOUR ANSWER HERE
+
+### 2.2
+
+Use the `lawa_to_plot` dataset to produce the plot:
+
+```{r}
+
+```
+
+## Exercise 3
+
+## 3.1
+
+Create a table of the mean daily counts over the bridge (regardless of direction) for each day of the week by each mode (pedestrian or cyclist).
+
+```{r}
+
+```
+
+### 3.2
+
+Create a chart of the total monthly counts over the bridge for each month by each mode (pedestrian or cyclist) in each direction (to Massey or to City).
+
+```{r}
+
+```
+
+### 3.3
+
+Find the date on which the running event was held using the code block below.
+
+```{r}
+```
