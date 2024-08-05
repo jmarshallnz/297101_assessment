@@ -1,0 +1,45 @@
+```{r data generation, echo = FALSE, results = "hide"}
+library(dplyr)
+library(readr)
+library(exams)
+
+odis <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/cricket/ODIs.csv")
+answer <- odis |>
+  summarise(Score = sum(Score), Wickets=sum(Wickets)) |>
+  mutate(Average = Score/Wickets) |> pull(Average)
+```
+
+Question
+========
+
+A dataset of one day cricket match results from 1971 to 2019 may be downloaded into RStudio using the following code:
+
+```{r, eval=FALSE}
+library(tidyverse)
+odis <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/cricket/ODIs.csv")
+```
+
+Using these data, what is the average score per wicket taken across all these matches? (i.e. what is the total score across all matches divided by the total number of wickets across all matches?)
+
+Solution
+========
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, comment = "", results='asis'}
+src <- knitr::knit_expand(text=c('```{r, message=FALSE, warning=FALSE}',
+                   'library(tidyverse)',
+                   'odis <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/cricket/ODIs.csv")',
+                   'odis |>',
+                   '  summarise(Score = sum(Score), Wickets=sum(Wickets)) |>',
+                   '  mutate(Average = Score/Wickets)',
+                   '```'))
+res = knitr::knit_child(text = src, options = list(comment = ""), quiet=TRUE)
+cat(res)
+```
+
+Meta-information
+================
+
+extype: num
+exsolution: `r fmt(answer)`
+exname: odi summarise
+extol: 0.2

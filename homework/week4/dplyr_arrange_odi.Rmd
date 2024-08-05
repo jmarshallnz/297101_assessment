@@ -1,0 +1,62 @@
+```{r data generation, echo = FALSE, results = "hide"}
+library(dplyr)
+library(readr)
+library(exams)
+
+odis <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/cricket/ODIs.csv")
+
+right_answer <- odis |> summarise(Score = max(Score)) |> pull(Score)
+possible_answers <- c(right_answer, sample(c(300:480, 482:550), 4))
+
+questions <- possible_answers
+solutions <- c(TRUE,rep(FALSE, length(questions)-1))
+
+explanations <- character(length(solutions))
+
+## permute order of solutions/questions
+Order <- sample(seq_along(questions))
+questions <- questions[Order]
+solutions <- solutions[Order]
+explanations <- explanations[Order]  
+```
+
+Question
+========
+
+A dataset of one day cricket match results from 1971 to 2019 may be downloaded into RStudio using the following code:
+
+```{r, eval=FALSE}
+library(tidyverse)
+odis <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/cricket/ODIs.csv")
+```
+
+Using these data, what is the highest score achieved?
+
+```{r questionlist, echo = FALSE, results = "asis"}
+answerlist(questions, markup = "markdown")
+```
+
+Solution
+========
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, comment = "", results='asis'}
+src <- knitr::knit_expand(text=c('```{r, message=FALSE, warning=FALSE}',
+                   'library(tidyverse)',
+                   'odis <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/cricket/ODIs.csv")',
+                   'odis |>',
+                   '  arrange(desc(Score))',
+                   '```'))
+res = knitr::knit_child(text = src, options = list(comment = ""), quiet=TRUE)
+cat(res)
+```
+
+```{r solutionlist, echo = FALSE, results = "asis"}
+answerlist(mchoice2text(solutions, markup="markdown"), explanations, markup = "markdown")
+```
+
+Meta-information
+================
+
+extype: schoice
+exsolution: `r mchoice2string(solutions)`
+exname: Multiple Choice

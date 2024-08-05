@@ -1,0 +1,51 @@
+```{r data generation, echo = FALSE, results = "hide"}
+library(dplyr)
+library(readr)
+library(exams)
+
+odis <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/cricket/ODIs.csv")
+
+
+team_values <- odis |> pull(Team) |> unique()
+team <- sample(team_values, 1)
+
+year_values <- odis |> filter(Team == team) |> pull(Year) |> unique()
+year <- sample(year_values, 1)
+
+answer <- odis |> filter(Team == team, Year == year) |>
+  nrow()
+```
+
+Question
+========
+
+A dataset of one day cricket match results from 1971 to 2019 may be downloaded into RStudio using the following code:
+
+```{r, eval=FALSE}
+library(tidyverse)
+odis <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/cricket/ODIs.csv")
+```
+
+Using these data, how many times did `r team` play in `r year`?
+
+Solution
+========
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE, comment = "", results='asis'}
+src <- knitr::knit_expand(text=c('```{r, message=FALSE, warning=FALSE}',
+                   'library(tidyverse)',
+                   'odis <- read_csv("https://www.massey.ac.nz/~jcmarsha/data/cricket/ODIs.csv")',
+                   'odis |>',
+                   '  filter(Team == "{{team}}", Year == {{year}})',
+                   '```'))
+res = knitr::knit_child(text = src, options = list(comment = ""), quiet=TRUE)
+cat(res)
+```
+
+Meta-information
+================
+
+extype: num
+exsolution: `r fmt(answer)`
+exname: odi filter
+extol: 0.1
