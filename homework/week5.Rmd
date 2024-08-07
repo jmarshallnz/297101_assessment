@@ -1,0 +1,37 @@
+---
+title: "297.101: Homework 5"
+author: "YOUR NAME HERE"
+output: html_document
+---
+
+The data for today is monthly cases of campylobacteriosis in Aotearoa New Zealand from 1997 through 2020 by District Health Board. The following code block reads these data in, computes the case rate per 100,000 people, and extracts the year. **Don't change this code block.**
+
+```{r, message=FALSE}
+library(tidyverse)
+library(lubridate)
+
+campy <-
+  read_csv("https://www.massey.ac.nz/~jcmarsha/data/campylobacteriosis/campy_1997_2020.csv") |>
+  mutate(Year = year(Date))
+campy
+```
+
+## Task
+
+Use the code chunk below to produce a **table** summarising the number of cases for each district health board (`DHB`) for the years 2000, 2010, and 2020.
+
+- *Filter the years down to 2000, 2010 and 2020.*
+- *Summarise the total number of cases for each of these years by DHB.*
+- *Pivot the data wider to produce a table of DHB by year.*
+
+```{r}
+
+```
+
+## Submission
+
+- *Make sure you fill in your name in the `author` field at the top.*
+
+- *Once you are happy with your table, "Knit" this .Rmd file to produce a .html file.*
+
+- *Submit the resulting .html file to stream.*
